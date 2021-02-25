@@ -45,3 +45,8 @@ not need to open any ports because OpenTyrian makes use of UDP hole punching.
 project: https://github.com/opentyrian/opentyrian
 irc:     irc://irc.freenode.net/#tyrian
 forums:  http://tyrian2k.proboards.com/index.cgi?board=opentyriangeneral
+
+== Build for MacOs =============================================================
+
+1. install brew
+2. install SDL2 and SDL2_net

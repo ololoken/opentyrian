@@ -55,6 +55,11 @@
 #include <string.h>
 #include <time.h>
 
+#if defined(TARGET_OSX)
+    #include "CoreFoundation/CoreFoundation.h"
+    #include <unistd.h>
+#endif
+
 const char *opentyrian_str = "OpenTyrian";
 const char *opentyrian_version = OPENTYRIAN_VERSION;
 
@@ -318,6 +323,24 @@ void opentyrian_menu( void )
 
 int main( int argc, char *argv[] )
 {
+#if defined(TARGET_OSX)
+    //workaround for setting the working directory to the location of the executable
+    {
+        CFBundleRef bundle = CFBundleGetMainBundle();
+        CFURLRef bundleURL = CFBundleCopyBundleURL(bundle);
+        char *path = malloc(PATH_MAX);
+        Boolean success = CFURLGetFileSystemRepresentation(bundleURL, TRUE, (UInt8 *)path, PATH_MAX);
+        CFRelease(bundleURL);
+        if (success) {
+            chdir(path);
+            free(path);
+        }
+        else {
+            printf("Failed to set CWD\n");
+            return -1;
+        }
+    }
+#endif
 	mt_srand(time(NULL));
 
 	printf("\nWelcome to... >> %s %s <<\n\n", opentyrian_str, opentyrian_version);

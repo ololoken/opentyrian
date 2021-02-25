@@ -34,3 +34,7 @@ tyrian.sav
 
 # Doxygen output
 /doc/doxygen/
+/output
+/tyrian21
+/.idea
+.DS_Store

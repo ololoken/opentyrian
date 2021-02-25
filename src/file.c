@@ -43,14 +43,14 @@ const char *data_dir( void )
 
 	static const char *dir = NULL;
 
-	if (dir != NULL)
+	if (dir != NULL) {
 		return dir;
+	}
 
 	for (uint i = 0; i < COUNTOF(dirs); ++i)
 	{
 		if (dirs[i] == NULL)
 			continue;
-
 		FILE *f = dir_fopen(dirs[i], "tyrian1.lvl", "rb");
 		if (f)
 		{

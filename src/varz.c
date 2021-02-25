@@ -499,7 +499,7 @@ void JE_tyrianHalt( JE_byte code )
 	}
 
 	SDL_Quit();
-	exit(code);
+    exit(code);
 }
 
 void JE_specialComplete( JE_byte playerNum, JE_byte specialType )

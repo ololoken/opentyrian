@@ -4,8 +4,14 @@ ifneq ($(filter Msys Cygwin, $(shell uname -o)), )
     PLATFORM := WIN32
     TYRIAN_DIR = C:\\TYRIAN
 else
-    PLATFORM := UNIX
-    TYRIAN_DIR = $(gamesdir)/tyrian
+    UNAME_S := $(shell uname -s)
+    ifeq ($(UNAME_S),Darwin)
+        PLATFORM := OSX
+        TYRIAN_DIR = $(gamesdir)/tyrian
+    else
+        PLATFORM := UNIX
+        TYRIAN_DIR = $(gamesdir)/tyrian
+    endif
 endif
 
 WITH_NETWORK := true
@@ -42,12 +48,16 @@ gamesdir ?= $(datadir)/games
 
 ###
 
-TARGET := opentyrian
+OUTPUT_PATH := output/
+APP_NAME := opentyrian
+
+TARGET := $(OUTPUT_PATH)$(APP_NAME)
 
 SRCS := $(wildcard src/*.c)
 OBJS := $(SRCS:src/%.c=obj/%.o)
 DEPS := $(SRCS:src/%.c=obj/%.d)
 
+OSX_APP := $(APP_NAME).app/Contents/MacOS
 ###
 
 ifeq ($(WITH_NETWORK), true)
@@ -67,8 +77,12 @@ CFLAGS ?= -pedantic \
           -Wextra \
           -Wno-missing-field-initializers \
           -O2
-LDFLAGS ?=
+LDFLAGS ?= -s -w
 LDLIBS ?=
+
+ifeq ($(PLATFORM), OSX)
+    LDLIBS := $(LDLIBS) -framework CoreFoundation
+endif
 
 ifeq ($(WITH_NETWORK), true)
     SDL_CPPFLAGS := $(shell $(PKG_CONFIG) sdl2 SDL2_net --cflags)

@@ -8,7 +8,7 @@ else
     TYRIAN_DIR = $(gamesdir)/tyrian
 endif
 
-WITH_NETWORK := true
+WITH_NETWORK := false
 
 ################################################################################
 
@@ -16,7 +16,7 @@ WITH_NETWORK := true
 
 SHELL = /bin/sh
 
-CC ?= gcc
+CC ?= emcc
 INSTALL ?= install
 PKG_CONFIG ?= pkg-config
 
@@ -44,7 +44,7 @@ gamesdir ?= $(datadir)/games
 
 ###
 
-TARGET := opentyrian
+TARGET := opentyrian.js
 
 SRCS := $(wildcard src/*.c)
 OBJS := $(SRCS:src/%.c=obj/%.o)
@@ -69,7 +69,11 @@ CFLAGS ?= -pedantic \
           -Wextra \
           -Wno-format-truncation \
           -Wno-missing-field-initializers \
-          -O2
+          -O3 \
+          -flto \
+          -fno-rtti \
+          -fno-exceptions \
+          --use-port=sdl2
 LDFLAGS ?=
 LDLIBS ?=
 
@@ -91,7 +95,13 @@ ALL_CPPFLAGS = -DTARGET_$(PLATFORM) \
 ALL_CFLAGS = -std=iso9899:1999 \
              $(CFLAGS)
 ALL_LDFLAGS = $(SDL_LDFLAGS) \
-              $(LDFLAGS)
+              $(LDFLAGS) \
+              --preload-file data/ \
+              -sASYNCIFY \
+              -sASYNCIFY_IGNORE_INDIRECT \
+              -sENVIRONMENT=web \
+              -sASYNCIFY_ONLY=@async-functions.json \
+              -sSTACK_SIZE=98304
 ALL_LDLIBS = -lm \
              $(SDL_LDLIBS) \
              $(LDLIBS)
